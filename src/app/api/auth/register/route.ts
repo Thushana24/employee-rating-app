@@ -1,3 +1,4 @@
+import { OrganizationMember } from './../../../../generated/prisma/index.d';
 import prisma from "@/lib/prisma"; 
 import { RegisterUserSchema } from "@/schemas/user.schema";
 import argon2 from "argon2";
@@ -5,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import handleError from "../../helpers/handleError";
 import { OWNER_PERMISSIONS } from "../permission";
 import { UserRole } from "@/generated/prisma/client";
+import generateToken, { JWTPayload } from "../../helpers/generateToken";
 
 export async function POST(request: NextRequest) {
   try {
@@ -81,6 +83,11 @@ export async function POST(request: NextRequest) {
       });
 
       return { user, organization, organizationMember };
+    });
+
+    const token = generateToken<JWTPayload>({
+      id: result.user.id,
+      organizations: [result.organizationMember ]
     });
 
     const { password: _, ...userResponse } = result.user;

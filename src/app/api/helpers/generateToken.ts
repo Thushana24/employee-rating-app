@@ -1,0 +1,30 @@
+import { UserRole } from "@/generated/prisma"
+import jwt from "jsonwebtoken";
+
+export interface JWTPayload extends Record<string, any>{
+    id: string;
+    organizations: {
+        organizationId: string;
+        role: UserRole;
+        permissions: string[];
+    }[];
+}
+
+export default function generateToken<T extends Record<string, string>>(
+    payload: T,
+    options: jwt.SignOptions = {
+        expiresIn: "1w",
+    },
+) {
+    try {
+        const token = jwt.sign(payload, process?.env?.JWT_SECRET || "", options);
+        return token;
+    } catch (error) {
+        {
+            throw {
+                code: "error-generating-jwt",
+                error: "failed to generate jwt token",
+            }
+        }
+    }
+}

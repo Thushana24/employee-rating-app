@@ -59,4 +59,19 @@ const RegisterUserSchema = z
     path: ["confirm password"],
   });
 
-  export { RegisterUserSchema };
+const LoginUserSchema = z.object({
+  email: z
+    .string({ required_error: "Email is required" })
+    .email({ message: "Invalid email format" })
+    .max(255, { message: "Email cannot exceed 255 characters" })
+    .trim()
+    .toLowerCase(),
+
+  password: z
+    .string({ required_error: "Password is required" })
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .max(100, { message: "Password cannot exceed 100 characters" })
+    .trim()
+});
+
+  export { RegisterUserSchema,LoginUserSchema};

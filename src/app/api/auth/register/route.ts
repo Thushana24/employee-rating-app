@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import handleError from "../../helpers/handleError";
 import { OWNER_PERMISSIONS } from "../permission";
 import { UserRole } from "@/generated/prisma/client";
-import generateToken, { JWTPayload } from "../../helpers/generateToken";
+import generateToken, { IJWTPayload} from "../../helpers/generateToken";
 
 export async function POST(request: NextRequest) {
   try {
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       return { user, organization, organizationMember };
     });
 
-    const token = generateToken<JWTPayload>({
+    const token = generateToken<IJWTPayload>({
       id: result.user.id,
       organizations: [result.organizationMember ]
     });

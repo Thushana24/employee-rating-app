@@ -1,7 +1,7 @@
 import { UserRole } from "@/generated/prisma"
 import jwt from "jsonwebtoken";
 
-export interface JWTPayload extends Record<string, any>{
+export interface IJWTPayload extends Record<string, any>{
     id: string;
     organizations: {
         organizationId: string;

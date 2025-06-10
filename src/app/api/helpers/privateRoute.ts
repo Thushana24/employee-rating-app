@@ -2,13 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { IJWTPayload } from "./generateToken";
 import { headers } from "next/headers";
 import jwt, { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
-import { fstat } from "fs";
-import { error } from "console";
-import { check, success } from "zod/v4";
 import checkPermission from "./checkPermission";
 
 interface PrivateRouteCheck{
-    organizationId: string,
+    organizationId?: string,
     permissions: string[],
 }
 

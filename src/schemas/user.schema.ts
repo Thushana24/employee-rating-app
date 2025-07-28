@@ -1,5 +1,6 @@
 import z from "zod";
 import { CreateOrganizationSchema } from "./organization.schema";
+import { UserRole } from "@prisma/client";
 
 const RegisterUserSchema = z
   .object({
@@ -72,4 +73,17 @@ const LoginUserSchema = z.object({
     .trim(),
 });
 
-export { RegisterUserSchema, LoginUserSchema };
+const InviteUserSchema = z.object({
+  email: z
+    .string("Email is required")
+    .email({ message: "Invalid email format" })
+    .max(255, { message: "Email cannot exceed 255 characters" })
+    .trim()
+    .toLowerCase(),
+
+  role: z.nativeEnum(UserRole).refine((val) => val !== UserRole.OWNER, {
+    message: "The OWNER role is not allowed for invitations",
+  }),
+});
+
+export { RegisterUserSchema, LoginUserSchema, InviteUserSchema };

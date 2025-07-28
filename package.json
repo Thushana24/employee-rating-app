@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "create-diff:win": "@powershell -Command \"git diff --cached -- . ':^node_modules' ':^package-lock.json' ':^src/app/fonts' ':^public' | Out-File -FilePath $env:USERPROFILE\\\\Desktop\\\\diff.txt; git ls-files --others --exclude-standard ':!node_modules/*' ':!package-lock.json' ':!src/app/fonts/*' ':!public/*' | ForEach-Object { Write-Output ('+++ ' + $_); if (Test-Path -LiteralPath $_) { Get-Content -LiteralPath $_ } else { Write-Output '(file not found: ' + $_ + ')' } } | Out-File -FilePath $env:USERPROFILE\\\\Desktop\\\\diff.txt -Append\"",
+    "create-diff:win": "@powershell -Command \"git diff --cached -- . ':^node_modules' ':^package-lock.json' ':^src/app/fonts' ':^public' | Out-File -FilePath $env:USERPROFILE\\Desktop\\diff.txt; git ls-files --others --exclude-standard ':!node_modules/*' ':!package-lock.json' ':!src/app/fonts/*' ':!public/*' | ForEach-Object { Write-Output ('+++ ' + $_); Get-Content $_ } | Out-File -FilePath $env:USERPROFILE\\Desktop\\diff.txt -Append\"",
     "create-diff:mac": "{ git diff -- . ':(exclude)node_modules' ':(exclude)package-lock.json' ':(exclude)src/app/fonts' ':(exclude)public' && git ls-files --others --exclude-standard ':!node_modules/*' ':!package-lock.json' ':!src/app/fonts/*' ':!public/*' | while read file; do echo \"+++ $file\"; cat \"$file\"; done; } > ~/Desktop/diff.txt"
   },
   "dependencies": {

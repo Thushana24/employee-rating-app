@@ -134,10 +134,16 @@ const AcceptInviteUserSchema = z.object({
     }),
 });
 
+const AssignEmployeesSchema = z.object({
+  supervisorId: z.string(),
+  employeeIds: z.array(z.string()).nonempty(),
+});
+
 export {
   RegisterUserSchema,
   LoginUserSchema,
   InviteUserSchema,
   ResendInviteSchema,
   AcceptInviteUserSchema,
+  AssignEmployeesSchema,
 };

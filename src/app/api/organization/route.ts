@@ -97,3 +97,36 @@ export async function POST(request: NextRequest) {
     }
   });
 }
+
+
+export async function GET(request: NextRequest) {
+  return privateRoute(request, { permissions: [] }, async (curruser) => {
+    try {
+      const memberships = await prisma.organizationMember.findMany({
+        where: {
+          userId: curruser.id,
+        },
+        include: {
+          Organization: true,
+        },
+      });
+
+      const organizations = memberships.map((member) => ({
+        id: member.Organization.id,
+        name: member.Organization.name,
+        role: member.role,
+        status: member.status,
+      }));
+
+      return NextResponse.json(
+        {
+          success: true,
+          data: organizations,
+        },
+        { status: 200 }
+      );
+    } catch (error) {
+      return handleError(error, "Failed to fetch organizations");
+    }
+  });
+}

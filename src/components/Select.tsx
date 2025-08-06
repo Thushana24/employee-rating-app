@@ -6,7 +6,7 @@ import React, { ComponentProps, forwardRef, useId } from "react";
 type Variant = "default" | "error" | "success" | "warning";
 type Size = "sm" | "md" | "lg";
 
-interface IInput extends Omit<ComponentProps<"input">, "size"> {
+interface ISelect extends Omit<ComponentProps<"select">, "size"> {
   variant?: Variant;
   size?: Size;
   label?: string;
@@ -18,7 +18,7 @@ interface IInput extends Omit<ComponentProps<"input">, "size"> {
   required?: boolean;
 }
 
-const Input = forwardRef<HTMLInputElement, IInput>(
+const Select = forwardRef<HTMLSelectElement, ISelect>(
   (
     {
       className,
@@ -32,13 +32,13 @@ const Input = forwardRef<HTMLInputElement, IInput>(
       loading = false,
       required = false,
       id,
-
+      children,
       ...rest
     },
     ref
   ) => {
     const autoId = useId();
-    const inputId = id || autoId;
+    const selectId = id || autoId;
 
     const sizeClasses = {
       sm: "px-2 py-1 text-xs",
@@ -48,9 +48,9 @@ const Input = forwardRef<HTMLInputElement, IInput>(
 
     const variantClasses = {
       default:
-        "border-gray-300 focus:ring-[#adb5bd] focus:border-[#adb5bd] text-gray-800 dark:text-white ",
+        "border-gray-300 focus:ring-[#adb5bd] focus:border-[#adb5bd] text-gray-800 dark:text-white/60",
       error:
-        "border-gray-300 focus:ring-[#adb5bd] focus:border-[#adb5bd] text-gray-300 dark:text-white ",
+        "border-red-500 focus:ring-red-500 focus:border-red-500 text-red-900 bg-red-50",
       success:
         "border-green-500 focus:ring-green-500 focus:border-green-500 text-green-900 bg-green-50",
       warning:
@@ -58,9 +58,8 @@ const Input = forwardRef<HTMLInputElement, IInput>(
     };
 
     const iconColorClasses = {
-      default:
-        "text-gray-600 peer-focus:text-gray-800 dark:text-gray-400  dark:peer-focus:text-[white]",
-      error: "text-gray-400 peer-focus:text-pink-500",
+      default: "text-gray-400 peer-focus:text-[#adb5bd]",
+      error: "text-red-500",
       success: "text-green-500",
       warning: "text-yellow-500",
     };
@@ -73,27 +72,25 @@ const Input = forwardRef<HTMLInputElement, IInput>(
       <div className="flex w-full flex-col">
         {label && (
           <label
-            htmlFor={inputId}
+            htmlFor={selectId}
             className={cn(
               "mb-1 text-sm font-medium",
               currentVariant === "error"
-                ? "text-gray-700 dark:text-white/60"
+                ? "text-red-700"
                 : "text-gray-700 dark:text-white/60"
             )}
           >
             {label}
-            {required && (
-              <span className="ml-1 text-gray-700 dark:text-white/60">*</span>
-            )}
+            {required && <span className="ml-1 text-red-500">*</span>}
           </label>
         )}
 
         <div className="relative">
-          <input
+          <select
             ref={ref}
-            id={inputId}
+            id={selectId}
             className={cn(
-              "peer  w-full rounded-lg  font-medium transition-all duration-500 ease-in-out focus:ring-1 focus:ring-offset-1 focus:outline-0 bg-gray-700/10  dark:bg-white/10",
+              "peer w-full rounded-xl border font-medium transition-all duration-500 ease-in-out focus:ring-1 focus:ring-offset-1 focus:outline-0 dark:bg-[#03071e] dark:focus:bg-[#03071e]",
               sizeClasses[size],
               variantClasses[currentVariant],
               hasLeftIcon && "pl-10",
@@ -104,15 +101,17 @@ const Input = forwardRef<HTMLInputElement, IInput>(
             aria-invalid={!!error}
             aria-describedby={
               error
-                ? `${inputId}-error`
+                ? `${selectId}-error`
                 : helperText
-                  ? `${inputId}-helper`
+                  ? `${selectId}-helper`
                   : undefined
             }
             aria-required={required}
             disabled={loading || rest.disabled}
             {...rest}
-          />
+          >
+            {children}
+          </select>
 
           {/* Left Icon */}
           {hasLeftIcon && (
@@ -144,21 +143,20 @@ const Input = forwardRef<HTMLInputElement, IInput>(
         </div>
 
         {/* Error Message */}
-        <span
-          id={`${inputId}-error`}
-          className={cn(
-            "text-xs min-h-[1rem] font-medium text-gray-700 dark:text-gray-400 transition-all duration-300",
-            error ? "opacity-100" : "opacity-0"
-          )}
-        >
-          {error || " "}
-        </span>
+        {error && (
+          <span
+            id={`${selectId}-error`}
+            className="mt-1 text-xs font-medium text-red-600"
+          >
+            {error}
+          </span>
+        )}
 
         {/* Helper Text */}
         {helperText && !error && (
           <span
-            id={`${inputId}-helper`}
-            className="text-xs text-gray-500 dark:text-white/60"
+            id={`${selectId}-helper`}
+            className="mt-1 text-xs text-gray-500 dark:text-white/60"
           >
             {helperText}
           </span>
@@ -168,68 +166,6 @@ const Input = forwardRef<HTMLInputElement, IInput>(
   }
 );
 
-Input.displayName = "Input";
+Select.displayName = "Select";
 
-export default Input;
-
-// import { cn } from "@/utilities/cn";
-// import React, { ComponentProps, forwardRef } from "react";
-
-// interface IInput extends ComponentProps<"input"> {
-//   varient?: string;
-//   Icon?: React.FC<React.SVGProps<SVGSVGElement>>;
-// }
-
-// const Input = forwardRef<HTMLInputElement, IInput>(
-//   ({ className, varient = "gray", Icon, ...rest }, ref) => {
-//     return (
-//       <div className="w-full flex flex-col relative">
-//         <input
-//           ref={ref}
-//           className={cn(
-//             "peer rounded-xl border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 pl-10 focus:outline-0 focus:ring-2 focus:ring-offset-1 focus:ring-purple-700",
-//             { "text-green-800": varient === "green" },
-//             className
-//           )}
-//           {...rest}
-//         />
-//         {Icon && (
-//           <div className="absolute left-0 inset-y-0 flex flex-col items-center justify-center px-2 peer-focus:text-purple-700">
-//             <Icon />
-//           </div>
-//         )}
-//       </div>
-//     );
-//   }
-// );
-
-// Input.displayName = "Input";
-
-// export default Input;
-
-{
-  /*
-  //before-forwardref//
-import { cn } from "@/utilities/cn";
-import React, { ComponentProps } from "react";
-
-interface IInput extends ComponentProps<"input"> {
-  varient?: string;
-}
-const Input = ({ className, varient = "gray", ...rest }: IInput) => {
-  return (
-    <input
-      className={cn(
-        "rounded-xl border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800",
-
-        { "text-green-800": varient === "green" },
-        className
-      )}
-      {...rest}
-    />
-  );
-};
-
-export default Input;
-*/
-}
+export default Select;
